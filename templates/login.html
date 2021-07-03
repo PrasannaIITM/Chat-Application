@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Chat App</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
 <h1>Login</h1>
 <h3>{{ message }}</h3>
 <form method="post" action="/login">
@@ -16,5 +11,4 @@
     <br>
     <button type="submit">Submit</button>
 </form>
-</body>
-</html>
+{% endblock %}
