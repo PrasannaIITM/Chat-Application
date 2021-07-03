@@ -93,7 +93,7 @@ def save_message(room_id, text, sender):
         "sender" : sender,
         "created_at" : datetime.now()
     })
-MESSAGE_FETCH_LIMIT = 3
+MESSAGE_FETCH_LIMIT = 5
 def get_messages(room_id, page = 0):
     offset = page * MESSAGE_FETCH_LIMIT
     messages = list(messages_collection.find({"room_id" : ObjectId(room_id)}).sort("_id", DESCENDING).limit(MESSAGE_FETCH_LIMIT).skip(offset))
