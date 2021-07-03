@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Sign Up</h1>
-    <h3>{{ message }}</h3>
+<h1>Sign Up</h1>
+<h3>{{ message }}</h3>
+<div class = "login-card">
+<div class="card">
+<div class="card-body">
     <form method="post" action="/signup">
         <label>Username:</label>
         <input type="text" name="username">
@@ -14,4 +17,7 @@
         <br>
         <button type="submit">Submit</button>
     </form>
+</div>
+</div>
+</div>
 {% endblock %}

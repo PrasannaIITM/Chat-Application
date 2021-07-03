@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Chat App</h1>
-    <h3>Hi! 
+    <h3>Hi,  
     {% if current_user.is_authenticated %}
-        {{ current_user.username }}
+        {{ current_user.username }}!
     {% else %}
-        Guest
+        Guest!
     {% endif %}
     </h3>
     <!--
@@ -21,13 +20,18 @@
         <button type="submit">Submit</button>
     </form>
     -->
-
+    <div class = "login-card">
+    <div class="card">
+    <div class="card-body">
     {% if current_user.is_authenticated %}
     <h3>My rooms</h3>
-    <ul>
+    <ul class="list-group">
         {% for room in rooms %}
-            <li><a href="/rooms/{{ room._id.room_id }}">{{ room.room_name }}</a></li>
+            <li class="list-group-item"><a href="/rooms/{{ room._id.room_id }}">{{ room.room_name }}</a></li>
         {% endfor %}
     </ul>
     {% endif %}
+    </div>
+    </div>
+    </div>
 {% endblock %}

@@ -1,29 +1,55 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>
-        Welcome to chat room {{ room.name }}
+<div class = "outermost">
+    <h1 style="padding-top:10px;">
+        <b>{{ room.name }}</b>
     </h1>
-    <button type="button" id="load_older_messages">
+    {% if is_admin %}
+    <a href="/rooms/{{ room._id }}/edit">
+        <button type="button" class="btn btn-dark">Edit</button>
+    </a>
+    {% endif %}
+    <button type="button" id="load_older_messages" class="btn btn-info">
         Load Older Messages
     </button>
 
-    <div id = "messages">
-        {% for message in messages%}
-            <div><b>{{ message.sender }}: </b> {{ message.text }} [{{ message.created_at }}]</div>
-        {% endfor %}
+    <div class = "chat_window">
+        <div class="top_menu">
+            <h3>Chat</h3>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Members
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    {% for member in room_members %}
+                        <li class="dropdown-item">{{ member._id.username }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <ul class = "list-group" id = "messages">
+            {% for message in messages%}
+                <li class="container"><b>{{ message.sender }}: </b> {{ message.text }} [{{ message.created_at }}]</li>
+            {% endfor %}
+        </ul>
+        
+        <form id = "message_input_form">
+            <div id="wrapper">
+                <div id="left">
+                    <input class="form-control" type="text" id = "message_input" placeholder="Enter your message here">
+                </div>
+                <div id="right">
+                    <button type = "submit" class="btn btn-success">Send</button>
+                </div>
+            </div>
+        </form>
+
+        
     </div>
+    
+</div>
 
-    <form id = "message_input_form">
-        <input type="text" id = "message_input" placeholder="Enter your message here">
-        <button type = "submit">Send</button>
-    </form>
-
-    <h3>Members</h3>
-    <ul>
-        {% for member in room_members %}
-            <li>{{ member._id.username }}</li>
-        {% endfor %}
-    </ul>
     <!-- <button id = "leave_room_button" type = "submit">Leave Room</button> -->
     
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js" integrity="sha512-iZIBSs+gDyTH0ZhUem9eQ1t4DcEn2B9lHxfRMeGQhyNdSUz+rb+5A3ummX6DQTOIs1XK0gOteOg/LPtSo9VJ+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -54,7 +80,7 @@
 
         
     });
-
+    
     let page = 0;
     document.getElementById("load_older_messages").onclick = (e) => {
         page += 1;
@@ -71,32 +97,36 @@
     };
 
     function prepend_message(message, username, created_at) {
-        const newNode = document.createElement('div');
+        const newNode = document.createElement('li');
+        newNode.className = "container"
         newNode.innerHTML = `<b>${username}:</b> ${message} [${created_at}]`;
         const messages_div = document.getElementById('messages');
         messages_div.insertBefore(newNode, messages_div.firstChild);
     }
 
-    window.onbeforeunload = function () {
+    window.addEventListener("beforeunload", function (e) {
         console.log("leaving")
         socket.emit('leave_room', {
             username: "{{ username }}",
             room: "{{ room._id }}"
         })
-    };
+    });
+    
 
     socket.on('join_room_announcement', function(data){
         console.log(data);
         if (data.username !== "{{ username }}") {
-            const newNode = document.createElement('div');
-            newNode.innerHTML = `<b>${data.username}</b> has joined the room ${data.room}`;
+            const newNode = document.createElement('li');
+            newNode.className = "container"
+            newNode.innerHTML = `<b>${data.username}</b> has joined the room`;
             document.getElementById("messages").appendChild(newNode);
         }
     });
 
     socket.on('receive_message', function(data){
         console.log(data);
-        const newNode = document.createElement('div');
+        const newNode = document.createElement('li');
+        newNode.className = "container"
         newNode.innerHTML = `<b>${data.username}: </b> ${data.message} [${data.created_at}]`;
         document.getElementById("messages").appendChild(newNode);
     });
@@ -104,7 +134,7 @@
     socket.on('leave_room_announcement', function (data) {
         console.log(data);
         const newNode = document.createElement('div');
-        newNode.innerHTML = `<b>${data.username}</b> has left the room`;
+        newNode.innerHTML = `<li class="container"><b>${data.username}</b> has left the room</li>`;
         document.getElementById('messages').appendChild(newNode);
     });
 </script>
